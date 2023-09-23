@@ -10,3 +10,8 @@ conda env create --file environment.yml
 ```bash
 panel serve testing_app.ipynb
 ```
+
+## To do
+
+- [ ] add a to docker
+- [ ] add the backend
