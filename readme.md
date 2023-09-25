@@ -64,6 +64,11 @@ sudo docker run -t -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-extr
 
 ```
 
+## Tips
+
+Create a biger swap file, please refer to [here](https://webapp.chatgpt4google.com/s/MTk2Njgw)
+
+
 ## To do
 
 - [ ] add the backend
