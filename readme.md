@@ -57,7 +57,8 @@ sudo docker run hello-world
 
 ```bash
 # it may take a while
-sudo docker run -t -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-extract -p /opt/car.lua /data/planet-latest.osm.pbf || echo "osrm-extract failed"
+# sudo docker run -t -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-extract -p /opt/car.lua /data/planet-latest.osm.pbf || echo "osrm-extract failed"
+
 ```
 
 ```bash

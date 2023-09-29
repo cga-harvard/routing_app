@@ -9,3 +9,4 @@ dependencies:
   - python=3.11.5
   - tqdm=4.66.1
   - jupyter_bokeh
+  - pydeck
