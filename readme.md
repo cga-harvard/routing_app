@@ -61,8 +61,10 @@ sudo docker run hello-world
 
 ```
 
-```bash
+use the this url for openshift deployment
 
+```bash
+routing-ui-gis-data-science-big-data-projects-at-cga.apps.shift.nerc.mghpcc.org
 ```
 
 ## Tips

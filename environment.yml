@@ -5,7 +5,7 @@ dependencies:
   - geopandas=0.14.0
   - panel
   - georouting=0.0.8
-  - jupyter=
+  - jupyter
   - python=3.11.5
   - tqdm=4.66.1
   - jupyter_bokeh
