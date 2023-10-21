@@ -64,7 +64,7 @@ def calculate_distance(run):
         yield "Calculation did not finish yet :("
         return
     # import gevent
-    for k,v in tqdm(df.iterrows(), total=df.shape[0]):
+    for k,v in tqdm(df.iterrows(), total=df.shape[0],colour='#408558'):
         origin = ( v["origin_lat"],v["origin_lon"])
         destination = ( v["dest_lat"],v["dest_lon"])
         route = router.get_route(origin, destination)
@@ -84,12 +84,27 @@ def calculate_distance(run):
     view_state = pdk.ViewState(
                     longitude=data_view.longitude, latitude=data_view.latitude, zoom= data_view.zoom, bearing=0, pitch=45
                 )
+    arc_layer = pdk.Layer(
+            "ArcLayer",
+            data=df,
+            # get_width="S000 * 60",
+            get_width="2",
+            # set arc width
+
+            get_source_position=["origin_lon", "origin_lat"],
+            get_target_position=["dest_lon", "dest_lat"],
+            get_tilt=15,
+            get_source_color=RED_RGB,
+            get_target_color=GREEN_RGB,
+            pickable=True,
+            auto_highlight=True,
+        )
     TOOLTIP_TEXT = {"html": "<br /> Source location in red; Destination location in green"}
-    # r = pdk.Deck(arc_layer, initial_view_state=view_state, tooltip=TOOLTIP_TEXT)
+    r = pdk.Deck(arc_layer, initial_view_state=view_state, tooltip=TOOLTIP_TEXT)
 
-
-
-
+    json_spec = json.loads(r.to_json())
+    deck_gl.object = json_spec
+    deck_gl.param.trigger('object')
 
 
     from io import StringIO
@@ -97,7 +112,10 @@ def calculate_distance(run):
     df.to_csv(sio)
     sio.seek(0)
     download_view = pn.widgets.FileDownload(sio, embed=True, filename='results.csv', 
-                                            # sizing_mode='stretch_width'
+                                            # sizing_mode='stretch_width',
+                                            button_type='success',
+                                            colour='#408558'
+
                                             )
     results_desc = pn.pane.Markdown("""
     ## 3. Downlaod the result
@@ -162,6 +180,9 @@ template = pn.template.FastListTemplate(
     favicon = 'https://dssg.fas.harvard.edu/wp-content/uploads/2017/12/CGA_logo_globe_400x400.jpg',
     header_background = '#212121',
     header_color = '#2F6DAA',
+    # header_color = '#408558',
+    # neutral_color = '#408558',
+    # accent_base_color = '#408558',
     sidebar=[app],
     main=[deck_gl,cite_and_contribute],
     theme="dark"
