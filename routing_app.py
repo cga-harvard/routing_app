@@ -53,7 +53,7 @@ from panel.widgets import Tqdm
 tqdm = Tqdm(width=300)
 # create a router object 
 router = OSRMRouter(mode="driving",
-                    # base_url="http://172.30.232.152:5000"
+                    base_url="http://172.30.232.152:5000"
                     )
 
 def calculate_distance(run):
@@ -73,17 +73,21 @@ def calculate_distance(run):
                                     )
     
     import numpy as np
-    v1 = df[["origin_lon", "origin_lat"]].values
-    v2 = df[["dest_lon", "dest_lat"]].values
+    if df.shape[0] > 10000:
+        df_map = df.sample(10000, random_state=36)
+    else:
+        df_map = df
+    v1 = df_map[["origin_lon", "origin_lat"]].values
+    v2 = df_map[["dest_lon", "dest_lat"]].values
     v = np.concatenate([v1, v2])
-    v_df = pd.DataFrame(v, columns=["lon", "lat"])
-    data_view = pdk.data_utils.compute_view(v_df[["lon", "lat"]])
+    v_df_map = pd.DataFrame(v, columns=["lon", "lat"])
+    data_view = pdk.data_utils.compute_view(v_df_map[["lon", "lat"]])
     view_state = pdk.ViewState(
                     longitude=data_view.longitude, latitude=data_view.latitude, zoom= data_view.zoom, bearing=0, pitch=45
                 )
     arc_layer = pdk.Layer(
             "ArcLayer",
-            data=df,
+            data=df_map,
             # get_width="S000 * 60",
             get_width="2",
             # set arc width
