@@ -4,10 +4,6 @@ import numpy as np
 import json
 
 pn.extension('deckgl')
-
-
-# pn.extension()
-# pn.extension('deckgl')
 import pydeck as pdk
 file_input = pn.widgets.FileInput(accept='.csv', name='Upload CSV')
 GREEN_RGB = [0, 255, 0, 90]
@@ -44,7 +40,7 @@ def load_csv(data):
         return pn.Column("There are %d od pairs that need to be calculated"%df.shape[0])
 
 active_load_csv = pn.bind(load_csv, file_input.param.value)
-sel_data_desc = pn.pane.Markdown("""## 1. Upload the CSV file
+sel_data_desc = pn.pane.Markdown("""## 1. Upload the CSV file and Run
 The input CSV should have four columns named `origin_lon`, `origin_lat`, `dest_lon`, `dest_lat` for origin and destination longitude and latitude respectively, a sample can be found [here](https://raw.githubusercontent.com/spatial-data-lab/data/main/sample_3.csv).
                                     """)
 data_upload_view = pn.Column(sel_data_desc,file_input,active_load_csv)
@@ -100,7 +96,7 @@ def calculate_distance(run):
             auto_highlight=True,
         )
     TOOLTIP_TEXT = {"html": "<br /> Source location in red; Destination location in green"}
-    r = pdk.Deck(arc_layer, initial_view_state=view_state, tooltip=TOOLTIP_TEXT)
+    r = pdk.Deck(arc_layer, initial_view_state=view_state, tooltip=TOOLTIP_TEXT,description="<h2>Taxi Trip Type</h2>")
 
     json_spec = json.loads(r.to_json())
     deck_gl.object = json_spec
@@ -114,13 +110,11 @@ def calculate_distance(run):
     download_view = pn.widgets.FileDownload(sio, embed=True, filename='results.csv', 
                                             # sizing_mode='stretch_width',
                                             button_type='success',
-                                            colour='#408558'
+                                            # text = "Download the result",
+                                            # colour='#408558'
 
                                             )
-    results_desc = pn.pane.Markdown("""
-    ## 3. Downlaod the result
-    
-                             """)
+    results_desc = pn.pane.Markdown("""## 2. Downlaod the result""")
     table_download_view = pn.Column(results_desc,"The output is a CSV with added `distance (m)` and `duration (s)` columns. The table below only show the first 3 rows of the result",final_table,download_view)
     
     yield table_download_view
@@ -136,7 +130,7 @@ run_and_download = pn.Column(run, tqdm, pn.bind(calculate_distance, run))
 # pn.Column(button,tqdm)
 # table_download_view = pn.bind(table_download, button.param.value)
 # run_and_download = pn.Column(button,tqdm,table_download_view)
-run_and_download
+# run_and_download
 
 intro = pn.pane.Markdown("""<center> 
                          <img src="https://dssg.fas.harvard.edu/wp-content/uploads/2017/12/CGA_logo_globe_400x400.jpg" alt="drawing" style="width:100px;"/> 
@@ -146,7 +140,7 @@ This app computes distance and duration between two points from a csv with origi
 """, 
 sizing_mode='stretch_width'
 )
-intro
+# intro
 
 cite = pn.pane.Markdown("""Please cite [our paper](https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/) if you use this app for your research. This app is built with [OSRM](http://project-osrm.org/), [Panel](https://panel.holoviz.org/), [Georouting](https://github.com/wybert/georouting) and [Pydeck.gl](https://pydeck.gl/). It hosted in [New England Research Cloud (NERC)](https://nerc.mghpcc.org/). The road network data is from [OpenStreetMap](https://www.openstreetmap.org/). We use Multi-Level Dijkstra (MLD) algorithm to find the route. For comparison with other routing engines, like Google Maps, Bing Maps, ESRI Routing service etc., please check [our paper](https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/) on FOSS4G 2023. 
 """, 
@@ -164,6 +158,14 @@ This app is developed by [Xiaokang Fu](https://gis.harvard.edu/people/xiaokang-f
 sizing_mode='stretch_width'
 )
 
+map_cite_contribute = pn.pane.Markdown("""The arc map of the source and destination points. Source location in red, destination location in green. The map can only show 10000 rows at most.
+
+Please cite [our paper](https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/) if you use this app for your research. This app is built with [OSRM](http://project-osrm.org/), [Panel](https://panel.holoviz.org/), [Georouting](https://github.com/wybert/georouting) and [Pydeck.gl](https://pydeck.gl/). It hosted in [New England Research Cloud (NERC)](https://nerc.mghpcc.org/). The road network data is from [OpenStreetMap](https://www.openstreetmap.org/). We use Multi-Level Dijkstra (MLD) algorithm to find the route. For comparison with other routing engines, like Google Maps, Bing Maps, ESRI Routing service etc., please check [our paper](https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/) on FOSS4G 2023. 
+This app is developed by [Xiaokang Fu](https://gis.harvard.edu/people/xiaokang-fu) and [Devika Kakkar](https://gis.harvard.edu/people/devika-kakkar). Please contact [Devika Kakkar](mailto:kakkar@fas.harvard.edu) for any questions. 
+""", 
+sizing_mode='stretch_width'
+)
+
 
 app = pn.Column(
        intro,
@@ -171,12 +173,18 @@ app = pn.Column(
         run_and_download,
         # cite
         )
-app
+# app
 
 # Instantiate the template with widgets displayed in the sidebar
-template = pn.template.FastListTemplate(
+# template = pn.template.GoldenTemplate(
+# template = pn.template.FastListTemplate(
+# template = pn.template.ReactTemplate(
+# template = pn.template.BootstrapTemplate(
+# template = pn.template.SlidesTemplate(
+template = pn.template.VanillaTemplate(
+# template = pn.template.MaterialTemplate(
     title='Rapid Route',
-    # logo='https://dssg.fas.harvard.edu/wp-content/uploads/2017/12/CGA_logo_globe_400x400.jpg',
+    logo='https://dssg.fas.harvard.edu/wp-content/uploads/2017/12/CGA_logo_globe_400x400.jpg',
     favicon = 'https://dssg.fas.harvard.edu/wp-content/uploads/2017/12/CGA_logo_globe_400x400.jpg',
     header_background = '#212121',
     header_color = '#2F6DAA',
@@ -191,11 +199,4 @@ template = pn.template.FastListTemplate(
 
 )
 
-# template.param.busy_indicator.allow_None=True
-
-# set relative sizing of the main area and sidebar
-
-# Append a layout to the main area, to demonstrate the list-like API
-# template.main.append(app)
-# template.main.append(app)
 template.servable()
