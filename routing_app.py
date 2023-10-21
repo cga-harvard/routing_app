@@ -2,18 +2,7 @@ import panel as pn
 import pandas as pd
 import numpy as np
 import json
-# CSS = """
-# #header {
-#     height: 0;
-#     padding: 0;
-# }
 
-# .pn-busy-container {
-#     visibility: hidden;
-# }
-# """
-
-# pn.extension(raw_css=[CSS])
 pn.extension('deckgl')
 import pydeck as pdk
 file_input = pn.widgets.FileInput(accept='.csv', name='Upload CSV')
@@ -143,20 +132,6 @@ run = pn.widgets.Button(name="Press here to run the calculation",
 run_and_download = pn.Column(run, tqdm, pn.bind(calculate_distance, run))
 
          
-# pn.Column(button,tqdm)
-# table_download_view = pn.bind(table_download, button.param.value)
-# run_and_download = pn.Column(button,tqdm,table_download_view)
-# run_and_download
-
-# intro = pn.pane.Markdown("""<center> 
-#                          <img src="https://raw.githubusercontent.com/wybert/routing_app/main/DALL·E%202023-10-21%2010.49.08%20-%20Vector%20illustration%20of%20a%20stopwatch%20merged%20with%20a%20globe%2C%20symbolizing%20rapid%20computation.%20Curved%20arrows%20depict%20routes%20connecting%20two%20points%20on%20the%20globe.png" alt="drawing" style="width:100px;"/>
-
-# This app computes distance and duration between two points from a csv with origin and destination longitudes and latitudes.
-#                          </center>
-# """, 
-# sizing_mode='stretch_width'
-# )
-
 intro = pn.pane.Markdown("""<center>
 <img src="https://raw.githubusercontent.com/wybert/routing_app/main/DALL·E%202023-10-21%2010.53.23%20-%20Photo%20logo%20with%20a%20clear%20image%20of%20the%20earth.%20Circling%20the%20globe%20is%20a%20blazing%20comet%2C%20emphasizing%20rapid%20movement.%20Two%20distinct%20points%20on%20the%20globe%20mark%20t.png" alt="drawing" style="width:100px;"/>
                          
@@ -165,18 +140,6 @@ This app computes distance and duration between two points from a CSV with origi
 """,
 sizing_mode='stretch_width'
 )
-intro
-
-# intro = pn.pane.Markdown("""<center>
-# <img src="https://dssg.fas.harvard.edu/wp-content/uploads/2017/12/CGA_logo_globe_400x400.jpg" alt="drawing" style="width:100px;"/>
-# <img src="https://www.iq.harvard.edu/files/harvard-iqss/files/iq-logo-white_alt.png" alt="drawing" style="width:100px;"/>
-
-# This app computes distance and duration between two points from a csv with origin and destination longitudes and latitudes.
-# </center>
-# """,
-# sizing_mode='stretch_width'
-# )
-
 
 
 cite = pn.pane.Markdown("""👉 Please cite [our paper](https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/) if you use this app for your research. We use [OSRM](http://project-osrm.org/) with Multi-Level Dijkstra (MLD) algorithm to find the route in this app. For comparison with other routing engines, like Google Maps, Bing Maps, ESRI Routing service etc., please check [our paper](https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/) on FOSS4G 2023. 
@@ -184,10 +147,6 @@ cite = pn.pane.Markdown("""👉 Please cite [our paper](https://isprs-archives.c
 sizing_mode='stretch_width'
 )
 
-# contribute = pn.pane.Markdown("""❤️ This app is developed by [Xiaokang Fu](https://gis.harvard.edu/people/xiaokang-fu) and [Devika Kakkar](https://gis.harvard.edu/people/devika-kakkar).    ✉️ Please contact [Devika Kakkar](mailto:kakkar@fas.harvard.edu) for any questions. 
-# """,
-# sizing_mode='stretch_width'
-# )
 
 acknowledge = pn.pane.Markdown("""❤️ This app is built with [OSRM](http://project-osrm.org/), [Panel](https://panel.holoviz.org/), [Georouting](https://github.com/wybert/georouting), [Pydeck.gl](https://pydeck.gl/) and hosted in [New England Research Cloud (NERC)](https://nerc.mghpcc.org/). The road network data is from [OpenStreetMap](https://www.openstreetmap.org/). """)
 
@@ -216,7 +175,6 @@ app = pn.Column(
         run_and_download,
         # cite
         )
-# app
 
 
 cga_logo = pn.pane.PNG(
@@ -234,7 +192,7 @@ logos = pn.Row(pn.layout.HSpacer(),cga_logo,iqss_logo)
 main_view = pn.Column(
     # pn.Row(pn.layout.HSpacer(),pn.pane.Markdown("## The arc map of the source and destination points, it only show 10000 rows at most"),pn.layout.HSpacer()),
     # deck_gl,
-    pn.Row(pn.pane.Markdown("The arc map of the source and destination points. It shows 10000 rows at most"), pn.layout.HSpacer(),map_legend),
+    pn.Row(pn.pane.Markdown("### The arc map of the source and destination points. It shows 10000 rows at most"), pn.layout.HSpacer(),map_legend),
     deck_gl,
     # pn.layout.Divider(),
     contribute_contacts
