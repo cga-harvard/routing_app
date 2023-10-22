@@ -41,10 +41,29 @@ def load_csv(data):
         return pn.Column("There are %d od pairs that need to be calculated"%df.shape[0])
 
 active_load_csv = pn.bind(load_csv, file_input.param.value)
-sel_data_desc = pn.pane.Markdown("""## 1. Upload the CSV file and Run
-The input CSV must have 4 columns named `origin_lon`, `origin_lat`, `dest_lon`, `dest_lat` for origin and destination longitude and latitude respectively, a sample can be found [here](https://raw.githubusercontent.com/spatial-data-lab/data/main/sample_3.csv).
-                                    """)
-data_upload_view = pn.Column(sel_data_desc,file_input,active_load_csv)
+
+
+from bokeh.models import TextInput, Tooltip
+from bokeh.models.dom import HTML
+html_tooltip = Tooltip(content=HTML("""<p>The input CSV must have at least 4 columns named:</p>
+<ul>
+<li><code>origin_lon</code></li>
+<li><code>origin_lat</code></li>
+<li><code>dest_lon</code></li>
+<li><code>dest_lat</code> </li>
+</ul>
+<p>for origin and destination longitude and latitude respectively.</p>
+<p>a sample can be found <a href="https://raw.githubusercontent.com/spatial-data-lab/data/main/sample_3.csv">here</a></p>
+                                    """), position="right")
+
+# html_tooltip = """<p>The input CSV must have at least 4 columns named <code>origin_lon</code>, <code>origin_lat</code>, <code>dest_lon</code>, <code>dest_lat</code> for origin and destination longitude and latitude respectively, a sample can be found <a href="https://raw.githubusercontent.com/spatial-data-lab/data/main/sample_3.csv">here</a></p>
+# """
+input_data_tool_tips = pn.widgets.TooltipIcon(value=html_tooltip)
+
+
+sel_data_desc = pn.pane.Markdown("""## Upload the CSV file""")
+data_upload_view = pn.Column(pn.Row(input_data_tool_tips,sel_data_desc),file_input,active_load_csv)
+
 
 
 
@@ -53,7 +72,7 @@ from panel.widgets import Tqdm
 tqdm = Tqdm(width=300)
 # create a router object 
 router = OSRMRouter(mode="driving",
-                    base_url="http://172.30.232.152:5000"
+                    # base_url="http://172.30.232.152:5000"
                     )
 
 def calculate_distance(run):
@@ -112,20 +131,43 @@ def calculate_distance(run):
     sio = StringIO()
     df.to_csv(sio)
     sio.seek(0)
-    download_view = pn.widgets.FileDownload(sio, embed=True, filename='results.csv', 
+    download_view = pn.widgets.FileDownload(sio, 
+                                            embed=True, 
+                                            filename='results.csv', 
                                             # sizing_mode='stretch_width',
                                             button_type='success',
                                             # text = "Download the result",
-                                            # colour='#408558'
+                                            # colour='#408558',
+                                            # height=34,
 
                                             )
-    results_desc = pn.pane.Markdown("""## 2. Downlaod the result""")
-    table_download_view = pn.Column(results_desc,"The output is a CSV with added `distance (m)` and `duration (s)` columns. The table below only show the first 3 rows of the result",final_table,download_view)
+    results_desc = pn.pane.Markdown("""## Downlaod the result""")
+
+
+    from bokeh.models import TextInput, Tooltip
+    from bokeh.models.dom import HTML
+    html_tooltip = Tooltip(content=HTML("""<p>The output is a CSV with added </p>
+<ul>
+<li><code>distance (m)</code></li>
+<li><code>duration (s)</code> </li>
+</ul>
+<p>columns for route distance in meters and drive time in seconds.</p>
+<p>We use <a href="http://project-osrm.org/">OSRM</a> with a Multi-Level Dijkstra algorithm to find the route</p>
+<p>The table below shows the first 3 rows of the result</p>
+
+                                        """), position="right")
+
+    # html_tooltip = """<p>The input CSV must have at least 4 columns named <code>origin_lon</code>, <code>origin_lat</code>, <code>dest_lon</code>, <code>dest_lat</code> for origin and destination longitude and latitude respectively, a sample can be found <a href="https://raw.githubusercontent.com/spatial-data-lab/data/main/sample_3.csv">here</a></p>
+    # """
+    output_data_tool_tips = pn.widgets.TooltipIcon(value=html_tooltip)
+
+
+    table_download_view = pn.Column(pn.Row(output_data_tool_tips,results_desc),final_table,download_view)
     
     yield table_download_view
 
 
-run = pn.widgets.Button(name="Press here to run the calculation",
+run = pn.widgets.Button(name="Calculate",
                         # button_type='primary',
                         # button_type='warning',
                         # button_type='success',
@@ -137,22 +179,41 @@ run_and_download = pn.Column(run, tqdm, pn.bind(calculate_distance, run))
 
          
 intro = pn.pane.Markdown("""<center>
-<img src="https://raw.githubusercontent.com/wybert/routing_app/main/DALL·E%202023-10-21%2010.53.23%20-%20Photo%20logo%20with%20a%20clear%20image%20of%20the%20earth.%20Circling%20the%20globe%20is%20a%20blazing%20comet%2C%20emphasizing%20rapid%20movement.%20Two%20distinct%20points%20on%20the%20globe%20mark%20t.png" alt="drawing" style="width:100px;"/>
+<img src="https://raw.githubusercontent.com/wybert/routing_app/main/DALL·E%202023-10-21%2010.53.23%20-%20Photo%20logo%20with%20a%20clear%20image%20of%20the%20earth.%20Circling%20the%20globe%20is%20a%20blazing%20comet%2C%20emphasizing%20rapid%20movement.%20Two%20distinct%20points%20on%20the%20globe%20mark%20t.png" alt="drawing" style="width:130px;"/>
                          
-This app computes distance and duration between two points from a CSV with origin and destination longitudes and latitudes.
+This app computes distance and duration between two points.
 </center>
 """,
 sizing_mode='stretch_width'
 )
 
 
-cite = pn.pane.Markdown("""👉 Please cite [our paper](https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/) if you use this app for your research. We use [OSRM](http://project-osrm.org/) with Multi-Level Dijkstra (MLD) algorithm to find the route in this app. For comparison with other routing engines, like Google Maps, Bing Maps, ESRI Routing service etc., please check [our paper](https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/) on FOSS4G 2023. 
+
+from bokeh.models import TextInput, Tooltip
+from bokeh.models.dom import HTML
+html_tooltip = Tooltip(content=HTML("""<p>We use <a href="http://project-osrm.org/">OSRM</a> with a Multi-Level Dijkstra algorithm to find the route. </p>
+<p>For comparison with other routing engines, like </p>
+<ul>
+<li>Google Maps</li>
+<li>Bing Maps</li>
+<li>ESRI Routing service</li>
+</ul>
+<p>please check <a href="https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/">our paper</a> on FOSS4G 2023. </p>
+                                        """), position="right")
+
+# html_tooltip = """<p>The input CSV must have at least 4 columns named <code>origin_lon</code>, <code>origin_lat</code>, <code>dest_lon</code>, <code>dest_lat</code> for origin and destination longitude and latitude respectively, a sample can be found <a href="https://raw.githubusercontent.com/spatial-data-lab/data/main/sample_3.csv">here</a></p>
+# """
+cite_tool_tips = pn.widgets.TooltipIcon(value=html_tooltip)
+
+
+cite_text = pn.pane.Markdown("""## Cite [this](https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/) if you use this app
 """, 
 sizing_mode='stretch_width'
 )
 
+cite = pn.Row(cite_tool_tips,cite_text)
 
-acknowledge = pn.pane.Markdown("""❤️ This app is built with [OSRM](http://project-osrm.org/), [Panel](https://panel.holoviz.org/), [Georouting](https://github.com/wybert/georouting), [Pydeck.gl](https://pydeck.gl/) and hosted in [New England Research Cloud (NERC)](https://nerc.mghpcc.org/). The road network data is from [OpenStreetMap](https://www.openstreetmap.org/). """)
+acknowledge = pn.pane.Markdown("""Acknowledgment: this app is built with [OSRM](http://project-osrm.org/), [Panel](https://panel.holoviz.org/), [Georouting](https://github.com/wybert/georouting), [Pydeck.gl](https://pydeck.gl/) and hosted in [New England Research Cloud (NERC)](https://nerc.mghpcc.org/). The road network data is from [OpenStreetMap](https://www.openstreetmap.org/). """)
 
 
 green = pn.Spacer(styles=dict(background='#408558'),width=33,height=16,align='center')
@@ -166,9 +227,7 @@ map_legend = pn.Column(
            )
 
 
-contribute_contacts = pn.Row(pn.pane.Markdown("""❤️ This app is developed by [Xiaokang Fu](https://gis.harvard.edu/people/xiaokang-fu) and [Devika Kakkar](https://gis.harvard.edu/people/devika-kakkar)"""),
-                                pn.Spacer(width=10),
-                                pn.pane.Markdown("""✉️ Please contact [Devika Kakkar](mailto:kakkar@fas.harvard.edu) for any questions. """)
+contribute_contacts = pn.Row(pn.pane.Markdown("""©️ This app is developed by [X.F.](https://gis.harvard.edu/people/xiaokang-fu) and [D.K.](https://gis.harvard.edu/people/devika-kakkar) from Harvard CGA. Please contact [Harvard CGA](mailto:kakkar@fas.harvard.edu) for any questions.""")
                                 )
 
 
@@ -183,7 +242,7 @@ app = pn.Column(
 
 cga_logo = pn.pane.PNG(
     'https://dssg.fas.harvard.edu/wp-content/uploads/2017/12/CGA_logo_globe_400x400.jpg',
-    link_url='https://gis.harvard.edu/', height=33, align='center'
+    link_url='https://gis.harvard.edu/', height=43, align='center'
 )
 
 iqss_logo = pn.pane.PNG(
@@ -191,12 +250,13 @@ iqss_logo = pn.pane.PNG(
     link_url='https://www.iq.harvard.edu/', height=33, align='center'
 )
 
-logos = pn.Row(pn.layout.HSpacer(),cga_logo,iqss_logo)
+# theme_switcher = pn.widgets.Switch(name='theme')
+logos = pn.Row(pn.layout.HSpacer(),cga_logo)
 
 main_view = pn.Column(
     # pn.Row(pn.layout.HSpacer(),pn.pane.Markdown("## The arc map of the source and destination points, it only show 10000 rows at most"),pn.layout.HSpacer()),
     # deck_gl,
-    pn.Row(pn.pane.Markdown("### The arc map of the source and destination points. It shows 10000 rows at most"), pn.layout.HSpacer(),map_legend),
+    pn.Row(pn.pane.Markdown("The arc map of the source and destination points. It shows 10000 rows at most"), pn.layout.HSpacer(),map_legend),
     deck_gl,
     # pn.layout.Divider(),
     contribute_contacts
@@ -209,9 +269,9 @@ main_view = pn.Column(
 # template = pn.template.ReactTemplate(
 # template = pn.template.BootstrapTemplate(
 # template = pn.template.SlidesTemplate(
-template = pn.template.VanillaTemplate(
-# template = pn.template.MaterialTemplate(
-    title='Rapid Route',
+# template = pn.template.VanillaTemplate(
+template = pn.template.MaterialTemplate(
+    title='RapidRoute (RR)',
     # logo='https://dssg.fas.harvard.edu/wp-content/uploads/2017/12/CGA_logo_globe_400x400.jpg',
     favicon = 'https://dssg.fas.harvard.edu/wp-content/uploads/2017/12/CGA_logo_globe_400x400.jpg',
     header_background = '#212121',
@@ -227,6 +287,5 @@ template = pn.template.VanillaTemplate(
     # busy_indicator=pn.indicators.BooleanStatus(value=False)
 
 )
-
 
 template.servable()
