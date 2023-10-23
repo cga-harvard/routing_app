@@ -30,7 +30,7 @@ json_spec = json.loads(r.to_json())
 deck_gl = pn.pane.DeckGL(json_spec, mapbox_api_key=MAPBOX_KEY, 
                          sizing_mode='stretch_width',
                         # sizing_mode='stretch_both',
-                        height=666
+                        height=560
                         )
 
 def load_csv(data):
@@ -227,7 +227,9 @@ map_legend = pn.Column(
            )
 
 
-contribute_contacts = pn.Row(pn.pane.Markdown("""©️ This app is developed by [X.F.](https://gis.harvard.edu/people/xiaokang-fu) and [D.K.](https://gis.harvard.edu/people/devika-kakkar) from Harvard CGA. Please contact [Harvard CGA](mailto:kakkar@fas.harvard.edu) for any questions.""")
+contribute_contacts = pn.Row(pn.pane.Markdown("""©️ This app is developed by [X.F.](https://gis.harvard.edu/people/xiaokang-fu) and [D.K.](https://gis.harvard.edu/people/devika-kakkar) from Harvard CGA. Please contact [Harvard CGA](mailto:kakkar@fas.harvard.edu) for any questions."""),
+                            #  pn.layout.Spacer(), align='start',
+                            #  height=15,
                                 )
 
 
