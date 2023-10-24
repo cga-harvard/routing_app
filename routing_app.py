@@ -30,7 +30,7 @@ json_spec = json.loads(r.to_json())
 deck_gl = pn.pane.DeckGL(json_spec, mapbox_api_key=MAPBOX_KEY, 
                          sizing_mode='stretch_width',
                         # sizing_mode='stretch_both',
-                        height=560
+                        height=660
                         )
 
 def load_csv(data):
@@ -61,10 +61,9 @@ html_tooltip = Tooltip(content=HTML("""<p>The input CSV must have at least 4 col
 input_data_tool_tips = pn.widgets.TooltipIcon(value=html_tooltip)
 
 
-sel_data_desc = pn.pane.Markdown("""## Upload the CSV file""")
-data_upload_view = pn.Column(pn.Row(input_data_tool_tips,sel_data_desc),file_input,active_load_csv)
-
-
+sel_data_desc = pn.pane.Markdown("""## 1. Upload the CSV file
+The input CSV must have at least 4 columns named `origin_lon`,`origin_lat`,`dest_lon` and `dest_lat` for origin and destination longitude and latitude respectively, a small sample can be found [here](https://raw.githubusercontent.com/spatial-data-lab/data/main/sample_3.csv).""")
+data_upload_view = pn.Column(pn.Row(sel_data_desc),file_input,active_load_csv)
 
 
 from georouting.routers import OSRMRouter
@@ -72,12 +71,12 @@ from panel.widgets import Tqdm
 tqdm = Tqdm(width=300)
 # create a router object 
 router = OSRMRouter(mode="driving",
-                    # base_url="http://172.30.232.152:5000"
+                    base_url="http://172.30.232.152:5000"
                     )
 
 def calculate_distance(run):
     if not run:
-        # yield "Calculation did not finish yet :("
+        yield "> 💡 Once the calulation is done, you can download the result here :)"
         return
     # import gevent
     for k,v in tqdm(df.iterrows(), total=df.shape[0],colour='#408558'):
@@ -141,7 +140,8 @@ def calculate_distance(run):
                                             # height=34,
 
                                             )
-    results_desc = pn.pane.Markdown("""## Downlaod the result""")
+    results_desc = pn.pane.Markdown("""## 2. Downlaod the result
+The output is a CSV with added `distance (m)` and `duration (s)` columns for route distance in meters and drive time in seconds. The table below shows the first 3 rows of the result. """,sizing_mode='stretch_width')
 
 
     from bokeh.models import TextInput, Tooltip
@@ -162,7 +162,7 @@ def calculate_distance(run):
     output_data_tool_tips = pn.widgets.TooltipIcon(value=html_tooltip)
 
 
-    table_download_view = pn.Column(pn.Row(output_data_tool_tips,results_desc),final_table,download_view)
+    table_download_view = pn.Column(results_desc,final_table,download_view)
     
     yield table_download_view
 
@@ -179,9 +179,9 @@ run_and_download = pn.Column(run, tqdm, pn.bind(calculate_distance, run))
 
          
 intro = pn.pane.Markdown("""<center>
-<img src="https://raw.githubusercontent.com/wybert/routing_app/main/DALL·E%202023-10-21%2010.53.23%20-%20Photo%20logo%20with%20a%20clear%20image%20of%20the%20earth.%20Circling%20the%20globe%20is%20a%20blazing%20comet%2C%20emphasizing%20rapid%20movement.%20Two%20distinct%20points%20on%20the%20globe%20mark%20t.png" alt="drawing" style="width:130px;"/>
+<img src="https://raw.githubusercontent.com/wybert/routing_app/main/DALL·E%202023-10-21%2010.53.23%20-%20Photo%20logo%20with%20a%20clear%20image%20of%20the%20earth.%20Circling%20the%20globe%20is%20a%20blazing%20comet%2C%20emphasizing%20rapid%20movement.%20Two%20distinct%20points%20on%20the%20globe%20mark%20t.png" alt="drawing" style="width:123px;"/>
                          
-This app computes distance and duration between two points.
+This app computes distance and duration between two points from a CSV with origin and destination longitudes and latitudes using [OSRM](http://project-osrm.org/).
 </center>
 """,
 sizing_mode='stretch_width'
@@ -206,14 +206,14 @@ html_tooltip = Tooltip(content=HTML("""<p>We use <a href="http://project-osrm.or
 cite_tool_tips = pn.widgets.TooltipIcon(value=html_tooltip)
 
 
-cite_text = pn.pane.Markdown("""## Cite [this](https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/) if you use this app
+cite_text = pn.pane.Markdown("""👉 Please cite [our paper](https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/) if you use this app for your research, for comparison with other routing engines, like Google Maps, Bing Maps, ESRI Routing service etc., please check [our paper](https://isprs-archives.copernicus.org/articles/XLVIII-4-W7-2023/53/2023/) on FOSS4G 2023.
 """, 
 sizing_mode='stretch_width'
 )
 
 cite = pn.Row(cite_tool_tips,cite_text)
 
-acknowledge = pn.pane.Markdown("""Acknowledgment: this app is built with [OSRM](http://project-osrm.org/), [Panel](https://panel.holoviz.org/), [Georouting](https://github.com/wybert/georouting), [Pydeck.gl](https://pydeck.gl/) and hosted in [New England Research Cloud (NERC)](https://nerc.mghpcc.org/). The road network data is from [OpenStreetMap](https://www.openstreetmap.org/). """)
+acknowledge = pn.pane.Markdown("""❤️ This app is built with [OSRM](http://project-osrm.org/), [Panel](https://panel.holoviz.org/), [Georouting](https://github.com/wybert/georouting), [Pydeck.gl](https://pydeck.gl/) and hosted in [New England Research Cloud (NERC)](https://nerc.mghpcc.org/). The road network data is from [OpenStreetMap](https://www.openstreetmap.org/).""")
 
 
 green = pn.Spacer(styles=dict(background='#408558'),width=33,height=16,align='center')
@@ -227,7 +227,8 @@ map_legend = pn.Column(
            )
 
 
-contribute_contacts = pn.Row(pn.pane.Markdown("""©️ This app is developed by [X.F.](https://gis.harvard.edu/people/xiaokang-fu) and [D.K.](https://gis.harvard.edu/people/devika-kakkar) from Harvard CGA. Please contact [Harvard CGA](mailto:kakkar@fas.harvard.edu) for any questions."""),
+contribute_contacts = pn.Row(pn.pane.Markdown("""©️ This app is developed by [X.F.](https://gis.harvard.edu/people/xiaokang-fu) and [D.K.](https://gis.harvard.edu/people/devika-kakkar) from Harvard CGA. &nbsp;&nbsp; ✉️ Please contact [Harvard CGA](mailto:kakkar@fas.harvard.edu) for any questions.
+"""),
                             #  pn.layout.Spacer(), align='start',
                             #  height=15,
                                 )
@@ -258,10 +259,11 @@ logos = pn.Row(pn.layout.HSpacer(),cga_logo)
 main_view = pn.Column(
     # pn.Row(pn.layout.HSpacer(),pn.pane.Markdown("## The arc map of the source and destination points, it only show 10000 rows at most"),pn.layout.HSpacer()),
     # deck_gl,
-    pn.Row(pn.pane.Markdown("The arc map of the source and destination points. It shows 10000 rows at most"), pn.layout.HSpacer(),map_legend),
+    pn.Row(pn.pane.Markdown("### The arc map of the source and destination points. It shows 10000 rows at most"), pn.layout.HSpacer(),map_legend),
     deck_gl,
     # pn.layout.Divider(),
-    contribute_contacts
+    contribute_contacts,
+    # acknowledge
     
     # sizing_mode='stretch_height'
 )
@@ -273,7 +275,7 @@ main_view = pn.Column(
 # template = pn.template.SlidesTemplate(
 # template = pn.template.VanillaTemplate(
 template = pn.template.MaterialTemplate(
-    title='RapidRoute (RR)',
+    title='RapidRoute',
     # logo='https://dssg.fas.harvard.edu/wp-content/uploads/2017/12/CGA_logo_globe_400x400.jpg',
     favicon = 'https://dssg.fas.harvard.edu/wp-content/uploads/2017/12/CGA_logo_globe_400x400.jpg',
     header_background = '#212121',
@@ -282,9 +284,9 @@ template = pn.template.MaterialTemplate(
     header_color = '#2F6DAA',
     # header_color = '#408558',
     # neutral_color = '#408558',
-    # accent_base_color = '#408558',
+    # accent_base_color = '#408558',s
     header=[logos],
-    sidebar=[app,cite,acknowledge],
+    sidebar=[app,cite_text,acknowledge],
     main=main_view,
     theme="dark"
     # sidebar_footer = """Xiao""",
