@@ -20,6 +20,13 @@ docker build -t routing_app:0.1 .
 docker run -p 5006:5006 routing_app:0.1
 ```
 
+push to docker hub
+```bash
+docker build --platform=linux/amd64 -t routing_app:1.3 .
+docker tag routing_app:1.3 happybeetles/routing_app
+docker push happybeetles/routing_app
+```
+
 ## backend
 
 1. Download the planet.osm.pbf file from [here](https://download.bbbike.org/osm/planet/)
