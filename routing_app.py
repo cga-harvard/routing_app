@@ -8,8 +8,8 @@ import pydeck as pdk
 file_input = pn.widgets.FileInput(accept='.csv', name='Upload CSV')
 GREEN_RGB = [0, 255, 0, 90]
 RED_RGB = [240, 100, 0, 90]
-MAPBOX_KEY = "pk.eyJ1IjoicGFuZWxvcmciLCJhIjoiY2s1enA3ejhyMWhmZjNobjM1NXhtbWRrMyJ9.B_frQsAVepGIe-HiOJeqvQ"
-# geoview
+MAPBOX_KEY = "pk.eyJ1Ijoid3liZXJ0IiwiYSI6ImNrYjk0bnpkdjBhczAycm84OWczMGFseDcifQ.icmgMlugfJ8erQ-JKmovWQ"
+# geoview 
 arc_layer = pdk.Layer(
             "ArcLayer",
             # data=df,
