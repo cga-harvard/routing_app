@@ -244,7 +244,7 @@ app = pn.Column(
 
 
 cga_logo = pn.pane.PNG(
-    'https://dssg.fas.harvard.edu/wp-content/uploads/2017/12/CGA_logo_globe_400x400.jpg',
+    'https://gis.harvard.edu/sites/projects.iq.harvard.edu/files/gis/files/cga_pin_logo_grayback.png',
     link_url='https://gis.harvard.edu/', height=43, align='center'
 )
 
