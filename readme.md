@@ -14,7 +14,7 @@ conda env create --file environment.yml
 ```bash
 conda activate routing_app
 # panel serve testing_app.ipynb
-panel serve --port 5006 testing_app.ipynb 
+panel serve --port 5006 routing_app.py
 ```
 
 ## How to run using docker 
