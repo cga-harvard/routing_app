@@ -14,12 +14,14 @@ conda env create --file environment.yml
 ```bash
 conda activate routing_app
 # panel serve testing_app.ipynb
-panel serve --port 5006 --address 0.0.0.0 --allow-websocket-origin=199.94.60.108:5006 testing_app.ipynb 
+panel serve --port 5006 testing_app.ipynb 
 ```
 
 ## How to run using docker 
 
 ### build and run the docker image
+
+change CMD commands in Dockerfile and run,
 
 ```bash
 docker build -t routing_app:0.1 .  
@@ -28,7 +30,7 @@ docker run -p 5006:5006 routing_app:0.1
 
 ### build and push the docker image to docker hub
 
-push to docker hub
+push to docker hub, please change the happybeetles to your own user name, you need login to Dockerhub both in your terminal, you need create a repo called routing_app in your docker hub.
 
 ```bash
 docker build --platform=linux/amd64 -t routing_app:1.3 .
@@ -38,6 +40,8 @@ docker push happybeetles/routing_app
 
 ## About the backend
 
+For the whole planet service, you can following these steps,
+
 1. Download the planet.osm.pbf file from [here](https://download.bbbike.org/osm/planet/)
 2. follow the instruction [here](https://github.com/Project-OSRM/osrm-backend)
 
@@ -45,7 +49,6 @@ docker push happybeetles/routing_app
 wget https://download.bbbike.org/osm/planet/planet-latest.osm.pbf
 
 ```
-
 
 ```bash
 # it may take a while
@@ -55,7 +58,7 @@ wget https://download.bbbike.org/osm/planet/planet-latest.osm.pbf
 ## Deployment in openshift
 
 1. Deploy the backend first, you can do it using the Openshift web portal to deploy the backend from [this Github repo](https://github.com/wybert/routing_app_service).
-2. Please find the backend service ip address in the Openshift web portal, and update the backend service ip address in the `routing_app.py` file. change the following line in the `routing_app.py` file.
+2. Please find the backend service ip address in the Openshift web portal by click on the pod's name, and update the backend service ip address in the `routing_app.py` file. change the following line in the `routing_app.py` file.
 
 ```python
 
