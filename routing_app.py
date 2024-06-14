@@ -53,7 +53,7 @@ html_tooltip = Tooltip(content=HTML("""<p>The input CSV must have at least 4 col
 <li><code>dest_lat</code> </li>
 </ul>
 <p>for origin and destination longitude and latitude respectively.</p>
-<p>a sample can be found <a href="https://raw.githubusercontent.com/spatial-data-lab/data/main/sample_3.csv">here</a></p>
+<p>a sample can be found <a href="https://raw.githubusercontent.com/wybert/routing_app/main/sample_3.csv">here</a></p>
                                     """), position="right")
 
 # html_tooltip = """<p>The input CSV must have at least 4 columns named <code>origin_lon</code>, <code>origin_lat</code>, <code>dest_lon</code>, <code>dest_lat</code> for origin and destination longitude and latitude respectively, a sample can be found <a href="https://raw.githubusercontent.com/spatial-data-lab/data/main/sample_3.csv">here</a></p>
@@ -71,7 +71,7 @@ from panel.widgets import Tqdm
 tqdm = Tqdm(width=300)
 # create a router object 
 router = OSRMRouter(mode="driving",
-                    base_url="http://172.30.232.152:5000"
+                    # base_url="http://172.30.232.152:5000"
                     )
 
 def calculate_distance(run):
@@ -227,7 +227,7 @@ map_legend = pn.Column(
            )
 
 
-contribute_contacts = pn.Row(pn.pane.Markdown("""©️ This app is developed by [X.F.](https://gis.harvard.edu/people/xiaokang-fu) and [D.K.](https://gis.harvard.edu/people/devika-kakkar) from Harvard CGA. &nbsp;&nbsp; ✉️ Please contact [Harvard CGA](mailto:kakkar@fas.harvard.edu) for any questions.
+contribute_contacts = pn.Row(pn.pane.Markdown("""©️ This app is developed by [Xiaokang Fu](https://gis.harvard.edu/people/xiaokang-fu) and [Devika Jain](https://gis.harvard.edu/people/devika-kakkar) from Harvard CGA. &nbsp;&nbsp; ✉️ Please contact [Harvard CGA](mailto:kakkar@fas.harvard.edu) for any questions.
 """),
                             #  pn.layout.Spacer(), align='start',
                             #  height=15,
